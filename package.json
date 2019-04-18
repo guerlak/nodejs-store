@@ -1,0 +1,32 @@
+{
+  "name": "store-nodejs",
+  "version": "1.0.0",
+  "description": "Sample Onlieshop in NodeJs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "start-server": "node app.js"
+  },
+  "author": "Rafael Guerlak",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "connect-flash": "^0.1.1",
+    "connect-mongodb-session": "^2.1.1",
+    "csurf": "^1.9.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.16.0",
+    "mongodb": "^3.2.3",
+    "mysql2": "^1.6.5",
+    "nodemailer": "^6.1.0",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "pug": "^2.0.3"
+  }
+}

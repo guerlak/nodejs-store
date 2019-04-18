@@ -1,0 +1,34 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+
+            <main>
+                <% if (users.length > 0) { %>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Admin</th>
+                        </tr>
+                        <% for (let user of users) { %>
+                            <tr>
+                                <td><b><%= user.name %></b></td>
+                                <td><%= user.email %></td>
+                                <td><p style="color: green"><%= user.role %></p></td>
+                                <%if (user.role != "admin"){ %>
+                                <td><input type="checkbox"></td>
+                                <%}%>
+                            </tr>
+          
+                            
+                            <% } %>
+                        </table>
+                    <% } else { %>
+                        <h1>No Users Found!</h1>
+                    <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>

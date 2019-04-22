@@ -97,7 +97,7 @@ router.post('/login', (req, res, next) => {
     User.findUserByEmail(userEmail)
     .then(user => {
         if(!user){
-            req.flash('error', 'invalid email or passord');
+            req.flash('error', 'invalid email or password');
             res.redirect('/login');
         }else{
             bcrypt.compare(userPass, user.password)
@@ -105,7 +105,6 @@ router.post('/login', (req, res, next) => {
                 if(passOk){
                     req.session.isLoggedin = true;
                     req.session.user = user;
-                    console.log("passando sessao ")
                     return req.session.save(err =>{
                             console.log(err);
                     })
@@ -128,7 +127,6 @@ router.post('/logout', isAuth, (req, res, next) => {
     //session will be deleted on DB, the session cookie persist until the browser close.
     req.session.destroy(err => {
         console.log(err);
-
         res.redirect('/login')
     })
 });
@@ -213,8 +211,6 @@ router.get('/new-password', (req, res, next) => {
 })
 
 router.post('/new-password', (req, res, next) => {
-
-  
 })
 
 module.exports = router;

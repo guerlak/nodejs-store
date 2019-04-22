@@ -43,11 +43,11 @@ class User {
             })
       }
 
-    static addToCart (prod, user)  {
-        console.log("its here/?")
-        this.cart.push(prod);
-        return dbConn.collection('users')
-        .updateOne(this)
+    addToCart (prod)  {
+        const dbConn = mongoDB();
+        this.cart.products.push(prod);
+        console.log(this._id)
+        return dbConn.collection('users').updateOne({_id: new mongo.ObjectID(this._id)}, {$set: this});
     }
 
     getCart (){

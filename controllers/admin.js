@@ -115,9 +115,6 @@ exports.getManageUsers = (req, res) => {
       users: users
     })
   })
-
- 
-
 };
 
 

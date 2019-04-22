@@ -36,6 +36,11 @@
 
                 <% } %>
 
+
+                <li class="main-header__item">
+                   
+                </li>
+        
             </ul>
 
         </nav>
@@ -46,8 +51,9 @@
                 </a>
 
             <form method="post" action="/logout">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <input  style="background: none; border: none; color: #039281; font-size: 2ch; cursor: pointer" type="submit" value="Logout">
+                    <input" type="hidden" name="_csrf" value="<%=csrfToken%>">
+ 
+  <input  style="background: none; border: none; color: #039281; ; font-size: 2ch" type="submit" value="Logout">
             </form>
                 
             <% } else { %>

@@ -40,8 +40,6 @@ app.use(session({
 app.use(csrfProtection);
 app.use(flash);
 
-
-
 app.use((req, res, next) => {
     if(!req.session.user){
         return next();
@@ -58,24 +56,29 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     res.locals.isLoggedIn = req.session.isLoggedin;
     res.locals.csrfToken = req.csrfToken()
+    
     if(req.user){
         res.locals.isAdmin = req.user.isAdmin;
     }else{
         res.locals.isAdmin= false;
     }
-    
     next();
 })
+
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+
 
 //Needs to put this middleware after the session
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.use(shopRoutes);
+app.use(userRoutes.getUser);
 
 app.use(errorController.get404);
 

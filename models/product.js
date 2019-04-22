@@ -19,7 +19,6 @@ module.exports = class Product {
     console.log("This _id: "+this.id)
 
     if(this.id){
-
       console.log("Updating on Product class...")
       opt = dbConn.collection('products')
       //Id has to be an object then MongoDB can find...

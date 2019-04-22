@@ -73,27 +73,20 @@ exports.getCart = (req, res, next) => {
     })
 }
 
-// exports.postCart = (req, res, next) => {
-//   const prodId = req.body.productId;
-//   Product.findById(prodId, product => {
-//     Cart.addProduct(prodId, product.price);
-//   });
-//   res.redirect('/cart');
-// };
 
 exports.postCart = (req, res, next) => {
 
   const prodId = req.body.productId;
-  User.findUserByEmail("guerlak@hotmail.com")
-  .then(user => {
+  user = new User(req.user.name, req.user.email, req.user.password);
     Product.findById(prodId)
     .then(product => {
+
       user.addToCart(product);
       res.redirect('/cart');
   }).catch(err => 
     console.log(err));
 
-  })
+  
 };
 
 exports.getOrders = (req, res, next) => {

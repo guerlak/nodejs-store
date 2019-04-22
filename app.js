@@ -46,10 +46,16 @@ app.use((req, res, next) => {
     }
     User.findUserById(req.session.user._id)
     .then(user => {
+        if(!user){
+            return next();
+        }
         req.user = user;
         console.log("Active session user:")
         console.log(user.name);
         next();
+    })
+    .catch(err => {
+        next(new Error(err))
     })
 })
 
@@ -71,7 +77,6 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 
-
 //Needs to put this middleware after the session
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -79,7 +84,14 @@ app.use(authRoutes);
 app.use(shopRoutes);
 app.use(userRoutes.getUser);
 
+app.use(errorController.get500);
+
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+    console.log(error)
+    res.redirect('/500');
+})
 
 // MYSQL2 PACKAGE
 //const db = require('./util/dbconnection')

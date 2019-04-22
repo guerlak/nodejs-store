@@ -1,28 +1,99 @@
 const Product = require('../models/product');
 const User = require('../models/user');
 
+const ITEMS_PER_PAGE = 3;
+
 exports.getIndex = (req, res, next) => {
 
+  const page = req.query.page || 1;
+  let totalItems;
+
   Product.fetchAll()
-    .then((products) => {
-      res.render('shop/product-list', {
-      prods: products,
-      pageTitle: 'Home',
-      path: '/',
+  .countDocuments()
+  .then(numProducts => {
+
+    totalItems = numProducts
+    return Product
+      .fetchAll()
+      .find()
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      .limit(ITEMS_PER_PAGE)
+      .toArray()
+  })
+  .then((products) => {
+      res.render('index', {
+        prods: products,
+        pageTitle: 'Home',
+        path: '/',
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * Number.parseInt(page) < totalItems,
+        hasPreviousPage: Number.parseInt(page) > 1,
+        nextPage: Number.parseInt(page) + 1,
+        previousPage: Number.parseInt(page) - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
     });
+  })
+  .catch(err => {
+    const error = new Error(err);
+    next(error);
   });
 }
 
 exports.getProducts = (req, res, next) => {
+
+  const page = req.query.page || 1;
+  let totalItems;
+
   Product.fetchAll()
-  .then(prods => {
-      res.render('shop/product-list', {
-      prods: prods,
-      pageTitle: 'All Products',
-      path: '/products',
+  .countDocuments()
+  .then(numProducts => {
+
+    totalItems = numProducts
+    return Product
+      .fetchAll()
+      .find()
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      .limit(ITEMS_PER_PAGE)
+      .toArray()
+  })
+  .then((products) => {
+      res.render('index', {
+        prods: products,
+        pageTitle: 'Products',
+        path: '/products',
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * Number.parseInt(page) < totalItems,
+        hasPreviousPage: Number.parseInt(page) > 1,
+        nextPage: Number.parseInt(page) + 1,
+        previousPage: Number.parseInt(page) - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
     });
-});
+  })
+  .catch(err => {
+    const error = new Error(err);
+    next(error);
+  });
 }
+
+
+
+exports.getProductDetail = (req, res, next) => {
+  const prodId = req.params.productId;
+  
+  Product.findById(prodId)
+  .then(product => {
+    res.render('shop/product-detail', {
+      product: product,
+      pageTitle: product.title,
+      path: '/products',
+      isLoggedIn: req.session.isLoggedin
+    });
+  }).catch(err => {
+    console.log(err);
+  });
+};
+
+
 
 exports.getProductDetail = (req, res, next) => {
   const prodId = req.params.productId;
@@ -61,7 +132,7 @@ exports.getCart = (req, res, next) => {
       res.render('shop/cart', {
         cart: user.cart,
         pageTitle: 'Cart Products',
-        path: '/cart/products',
+        path: '/cart',
         isLoggedIn: req.session.isLoggedin
       });
     })

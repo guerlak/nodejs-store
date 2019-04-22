@@ -146,7 +146,8 @@ router.post('/login', check('email').isEmail().withMessage('Please enter a valid
             })
         }
     }).catch(err =>  {
-        console.log(err);
+        res.redirect('404')
+        console.log('database error ' + err);
     });
 }
 });

@@ -12,7 +12,9 @@ exports.getProducts = (req, res, next) => {
       isLoggedIn: req.session.isLoggedin
     });
   }).catch(err => {
-    console.log(err);
+    const error = new Error(err);
+    error.httpStatusCode(500);
+    return next(error);
   })
 }
 
@@ -42,7 +44,9 @@ exports.getEditProduct = (req, res, next) => {
         pageTitle: product.title,
         editMode: "true"
     }).catch(err => {
-      throw err;
+      const error = new Error(err);
+      error.httpStatusCode(500);
+      return next(error);
     })
     });
   };
@@ -61,7 +65,9 @@ exports.postAddProduct = (req, res) => {
   .then(() => {
     res.redirect('/admin/products');
   }).catch(err => {
-    console.log(err)  
+    const error = new Error(err);
+    error.httpStatusCode(500);
+    return next(error);
   });
 };
 
@@ -82,7 +88,9 @@ exports.postUpdateProduct = (req, res, next) => {
       .then(() => {
         res.redirect('/admin/products');
       }).catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode(500);
+        return next(error);
       });
 };
 
@@ -94,7 +102,9 @@ exports.postDeleteProduct = (req, res) => {
   .then(() => {
     res.redirect('/admin/products');
   }).catch(err => {
-    console.log(err);
+    const error = new Error(err);
+    error.httpStatusCode(500);
+    return next(error);
   })
 };
 
@@ -104,6 +114,7 @@ exports.getManageUsers = (req, res) => {
   // if(!userRole){
   //   return res.redirect('/');
   // }
+  
   let users;
   User.fetchAll()
   .then(result => {

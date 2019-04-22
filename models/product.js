@@ -55,15 +55,7 @@ module.exports = class Product {
   static fetchAll() {
     const dbConn = mongoDB();
 
-    return dbConn.collection('products')
-        .find()
-        .toArray()
-        .then(prods =>{
-          return prods;
-        })
-        .catch(err => {
-          console.log(err);
-        })
+    return dbConn.collection('products') 
   }
 
   static findById(prodId) {
@@ -73,7 +65,6 @@ module.exports = class Product {
         .find({ _id: new mongo.ObjectID(prodId)})
         .next()
         .then(product => {
-
           return product;
         })
         .catch(err => {

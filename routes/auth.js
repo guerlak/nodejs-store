@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const express = require('express');
 const router = express.Router();
+const {check, validationResult} = require('express-validator/check')
 
 const bcrypt = require("bcryptjs");
 const User = require('../models/user');
@@ -20,28 +21,46 @@ router.get('/signup', (req, res, next) => {
     res.render('signup', {
         pageTitle: 'Signup Page',
         path:'/signup',
+        errorMsg: ""
     });
 });
 
-router.post('/signup', (req, res) => {
+router.post('/signup', check('email').isEmail().withMessage('Please enter a valid email'),
+                       check('password', 'Password must to be 5 char at least').isLength({min: 5}).isAlphanumeric(),
+                       check('passconfirmation').custom((value, {req}) => {
+                        if(value !== req.body.password){
+                            throw new Error('Passwords doesn´t match');
+                        }else{
+                          return true;
+                        }
+                       }),
+                (req, res) => {
 
     const userName = req.body.name;
     const userEmail = req.body.email;
     const userPass = req.body.password;
-    const passConfirmation = req.body.passconfirmation;
+    const errors = validationResult(req);
 
-    if(userPass === passConfirmation){
+    if(!errors.isEmpty()){
+        return res.status(422).render('signup', {
+                pageTitle: 'Signup Page',
+                path:'/signup',
+                errorMsg: errors.array()[0].msg
+            })
+    }else{
 
         User.findUserByEmail(userEmail)
         .then(existingUser => {
-            // if(existingUser){
-            //     console.log("User already exist!")
-            //     res.redirect('/signup');
-            // }else{
+            if(existingUser){
+                return res.status(422).render('signup', {
+                    pageTitle: 'Signup Page',
+                    path:'/signup',
+                    errorMsg: "This email is already registered"
+                })
+            }
                 return bcrypt.hash(userPass, 12)
                 .then(encryptedPass => {
                     const user = new User(userName, userEmail, encryptedPass);
-
                     return user.save()
                         .then(result => {
                             
@@ -59,15 +78,10 @@ router.post('/signup', (req, res) => {
                             throw err;
                         })
                 })
-            // }
         .catch(err => {
             console.log(err);
         })
-
-    }else{
-        console.log("Error comparing passwords...")
-        res.redirect('/signup');
-    }    
+    }
 });
 
 router.get('/login',(req, res, next) => {
@@ -85,14 +99,28 @@ router.get('/login',(req, res, next) => {
     res.render('login', {
         pageTitle: 'Login Page',
         path:'/login',
+        oldInput: {email: '', password: ''},
         errorMsg: msg
     });
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login', check('email').isEmail().withMessage('Please enter a valid email'),
+                      check('password', 'Password must to be 5 char at least').isLength({min: 5}).isAlphanumeric(), 
+                    
+    (req, res, next) => {
 
     const userEmail = req.body.email;
     const userPass = req.body.password;
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        return res.status(422).render('login', {
+                pageTitle: 'Signup Page',
+                path:'/signup',
+                oldInput: {email: userEmail, password: userPass},
+                errorMsg: errors.array()[0].msg
+            })
+    }else{
 
     User.findUserByEmail(userEmail)
     .then(user => {
@@ -101,8 +129,8 @@ router.post('/login', (req, res, next) => {
             res.redirect('/login');
         }else{
             bcrypt.compare(userPass, user.password)
-            .then(passOk => {
-                if(passOk){
+            .then(valid => {
+                if(valid){
                     req.session.isLoggedin = true;
                     req.session.user = user;
                     return req.session.save(err =>{
@@ -120,6 +148,7 @@ router.post('/login', (req, res, next) => {
     }).catch(err =>  {
         console.log(err);
     });
+}
 });
 
 router.post('/logout', isAuth, (req, res, next) => {

@@ -5,9 +5,12 @@
 
 <body>
         <%- include('./includes/navigation.ejs') %>
+        <% if(errorMsg) {%>
+            <div class="user-msg-error"><%= errorMsg %></div>
+        <% } %>
 
     <main>
-        <form class="product-form" action="/signup" method="POST">
+        <form class="product-form" action="/signup" method="POST" novalidate>
 
           <h2>Registration:</h2>
 

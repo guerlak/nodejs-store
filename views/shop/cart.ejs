@@ -5,18 +5,24 @@
 
         <main>
 
-                <table style="width: 400px">
+            <h2>Cart:</h2>
+
+                <table style="width: 400px; margin: 0 auto">
                 
-                    <% if(cart) {  %>
-                    <tr><td><b>Name</b></td><td><b>Price</b></td></tr>
+                    <% if(cart.products.length) {  %>
+                    <tr><td><b>Name</b></td>
+                        <td><b>Price</b></td>
+                        <td><b>Quantity</b></td>
+                    </tr>
                     <% for (let c of cart.products) { %>
                     <tr><td><%=c.title%></td>
-                        <td><%=c.price%></td>
+                        <td>$ <%=c.price%></td>
+                        <td><%=c.quantity.amount%></td>
                     </tr>
                     <% } %>
                     <tr><td><%=cart.totalPrice%></td></tr>
                     <% }else {  %>
-                    <h2>No products in the cart </h2>
+                    <h2>There is no products in the cart...</h2>
                     <% }%>
     
                 </table>

@@ -11,7 +11,7 @@ class User {
         this.resetToken = "";
         this.resetTokenExpiration = "";
         this.isAdmin = false;
-        this.cart = {products: [], amount: {prodName: "", total: 0}};
+        this.cart = {products: []}  
     }
 
     save() {
@@ -54,9 +54,13 @@ class User {
     addToCart (prod, id)  {
         const dbConn = mongoDB();
 
-        this.cart.products.push(prod);
-        // this.cart.amount.prodName.push(prod.name)
-        // this.cart.amount.total.push(1)
+        let cartProd = {...prod, quantity: {prodId: prod._id, amount: 1}};
+
+        console.log(cartProd); 
+        console.log(this);
+        console.log(id)
+
+        this.cart.products.push(cartProd);
 
         return dbConn.collection('users').updateOne({_id: new mongo.ObjectID(id)}, {$set: this});
     }

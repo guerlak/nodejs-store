@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 const User = require('../models/user');
 
 exports.getIndex = (req, res, next) => {
@@ -74,9 +73,10 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
     user = new User(req.user.name, req.user.email, req.user.password);
     user.cart = req.user.cart;
+    user.id = req.user._id;
     Product.findById(prodId)
     .then(product => {
-      user.addToCart(product, req.session.user._id);
+      user.addToCart(product, user.id);
       res.redirect('/cart');
   }).catch(err => 
     console.log(err));

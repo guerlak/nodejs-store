@@ -73,7 +73,6 @@ const userRoutes = require('./routes/user');
 
 
 //Needs to put this middleware after the session
-
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);

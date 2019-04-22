@@ -1,24 +1,27 @@
 <%- include('../includes/head.ejs') %>
 
-    </head>
 
-    <body>
         <%- include('../includes/navigation.ejs') %>
+
         <main>
 
+                <table style="width: 400px">
+                
+                    <% if(cart) {  %>
+                    <tr><td><b>Name</b></td><td><b>Price</b></td></tr>
+                    <% for (let c of cart.products) { %>
+                    <tr><td><%=c.title%></td>
+                        <td><%=c.price%></td>
+                    </tr>
+                    <% } %>
+                    <tr><td><%=cart.totalPrice%></td></tr>
+                    <% }else {  %>
+                    <h2>No products in the cart </h2>
+                    <% }%>
+    
+                </table>
 
-                       <table>
-                     
-                        <% if(cart.length < 1) {  %>
-                        <% for (let c of cart.products) { %>
-                        <tr><td><%=c.qty%></td></tr>
-                        <% } %>
-                        <tr><td><%=cart.totalPrice%></td></tr>
-                        <% }else {  %>
-                        <h2>No products in the cart </h2>
-                        <% }%>
-         
-                       </table>
-                </main>
+
+        </main>
               
-            <%- include('../includes/end.ejs') %>
+<%- include('../includes/end.ejs') %>

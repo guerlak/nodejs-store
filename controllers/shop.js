@@ -53,14 +53,12 @@ exports.getProductDetail = (req, res, next) => {
 // });
 // }
 
-
-
 exports.getCart = (req, res, next) => {
 
-  const user = new User("Rafael", "guerlak@hotmail.com", [])
+  User.findUserById(req.session.user._id)
+  .then(user => {
 
-    user.getCart()
-    .then(user => {
+    console.log(user.cart)
       res.render('shop/cart', {
         cart: user.cart,
         pageTitle: 'Cart Products',
@@ -68,20 +66,17 @@ exports.getCart = (req, res, next) => {
         isLoggedIn: req.session.isLoggedin
       });
     })
-    .catch(err => {
-      console.log(err);
-    })
 }
 
 
 exports.postCart = (req, res, next) => {
 
   const prodId = req.body.productId;
-  user = new User(req.user.name, req.user.email, req.user.password);
+    user = new User(req.user.name, req.user.email, req.user.password);
+    user.cart = req.user.cart;
     Product.findById(prodId)
     .then(product => {
-
-      user.addToCart(product);
+      user.addToCart(product, req.session.user._id);
       res.redirect('/cart');
   }).catch(err => 
     console.log(err));

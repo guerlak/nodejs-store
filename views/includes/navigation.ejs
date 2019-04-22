@@ -1,7 +1,8 @@
 <div class="backdrop"></div>
 <header class="main-header">
     <button id="side-menu-toggle">Menu</button>
-    <nav class="main-header__nav">
+    <nav class="main-header__nav" style="justify-content: space-between">
+
         <ul class="main-header__item-list">
 
             <li class="main-header__item">
@@ -34,31 +35,30 @@
                         </a>
                     </li>
 
-                <% } %>
+             <% } %>
 
-            </ul>
+        </ul>
 
-        </nav>
+        <ul class="main-header__item-list">
 
-        <div style="float: right; margin-left: 30rem; width: 30%;">
-
-                <a style="text-decoration: none; color: white; margin-right: 15px" class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">My Profile
-                </a>
+            <a style="text-decoration: none; color: white; margin-right: 15px" class="<%= path === '/user-profile' ? 'active' : '' %>" href="/user-profile">My Profile
+            </a>
 
             <form method="post" action="/logout">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <input  style="background: none; border: none; color: #039281; font-size: 2ch; cursor: pointer" type="submit" value="Logout">
+                    <input  style="background: none; border: none; color: #03a592; font-size: 2ch; cursor: pointer" type="submit" value="Logout">
             </form>
+
+        </ul>
+            
+    </nav>
                 
             <% } else { %>
 
         </ul>
 
-    </nav>
-
-    <div style="float: right; margin-left: 30rem; width: 30%;">
-        <nav>
-                <ul class="right-items">
+        <ul>
+               <ul class="right-items">
             
                 <li class="main-header__item ">
                     <a href="/login">Login</a>
@@ -69,9 +69,15 @@
                 </li>
 
             </ul>
+
         </nav>
-    </div>
+    
             <% } %>
+
+            
+        </ul>
+            
+    </nav>
 
 </header>
 

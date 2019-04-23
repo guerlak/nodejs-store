@@ -1,5 +1,11 @@
+const fs = require('fs');
+const path = require('path');
+
+const PDFDocument = require('pdfkit');
 const Product = require('../models/product');
 const User = require('../models/user');
+
+const pdfDoc = new PDFDocument();
 
 const ITEMS_PER_PAGE = 3;
 
@@ -38,6 +44,8 @@ exports.getIndex = (req, res, next) => {
     next(error);
   });
 }
+
+
 
 exports.getProducts = (req, res, next) => {
 
@@ -78,6 +86,7 @@ exports.getProducts = (req, res, next) => {
 
 
 exports.getProductDetail = (req, res, next) => {
+
   const prodId = req.params.productId;
   
   Product.findById(prodId)
@@ -93,23 +102,6 @@ exports.getProductDetail = (req, res, next) => {
   });
 };
 
-
-
-exports.getProductDetail = (req, res, next) => {
-  const prodId = req.params.productId;
-  
-  Product.findById(prodId)
-  .then(product => {
-    res.render('shop/product-detail', {
-      product: product,
-      pageTitle: product.title,
-      path: '/products',
-      isLoggedIn: req.session.isLoggedin
-    });
-  }).catch(err => {
-    console.log(err);
-  });
-};
 
 //MYSQL2 
 // exports.getIndex = (req, res, next) => {
@@ -168,4 +160,35 @@ exports.getCheckout = (req, res, next) => {
     path: '/checkout',
     pageTitle: 'Checkout',
   });
+};
+
+exports.getOrderDocument = (req, res, next) => {
+
+  const orderId = req.params.orderId;
+  const invoiceName = "invoice-" + orderId + ".pdf";
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+
+  // fs.readFile(invoicePath, (err, data)=>{
+  //   if(err){
+  //     return next(err);
+  //   }
+
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+  //   res.send(data)
+  // })
+
+  //increase performance to avoid download the whole file before send to the nav
+  // const file = fs.createReadStream(invoicePath);
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+  //   file.pipe(res);
+
+  const pdfDoc = new PDFDocument();
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+  pdfDoc.pipe(res);
+
+  pdfDoc.text('Hello World Guerlak');
+  pdfDoc.end();
+
 };

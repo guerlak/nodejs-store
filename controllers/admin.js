@@ -1,9 +1,13 @@
+const deleteFile = require('../util/fileHelper')
+
 const Product = require('../models/product');
 const User = require('../models/user');
-const mongoDb = require("mongodb");
+
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()
+  .find()
+  .toArray()
   .then(prods => {
     res.render('admin/products', {
       prods: prods,
@@ -12,9 +16,9 @@ exports.getProducts = (req, res, next) => {
       isLoggedIn: req.session.isLoggedin
     });
   }).catch(err => {
-    const error = new Error(err);
-    error.httpStatusCode(500);
-    return next(error);
+      const error = new Error(err);
+      error.httpStatusCode(500);
+      return next(error);
   })
 }
 
@@ -29,27 +33,23 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
 
-  const editMode = req.query.editMode;
   const prodId = req.query.prodId;
 
-  if (!editMode) {
-    return res.redirect("/");
-  } else {
     Product.findById(prodId)
-    .then(product => {
-      res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
-        product: product,
-        pageTitle: product.title,
-        editMode: "true"
+      .then(product => {
+        res.render('admin/edit-product', {
+          pageTitle: 'Edit Product',
+          path: '/admin/edit-product',
+          product: product,
+          pageTitle: product.title,
+          editMode: "true"
+      })
     }).catch(err => {
       const error = new Error(err);
       error.httpStatusCode(500);
       return next(error);
-    })
     });
-  };
+  
 };
 
 exports.postAddProduct = (req, res) => {
@@ -59,6 +59,7 @@ exports.postAddProduct = (req, res) => {
   const price = Math.round(req.body.price * 100) / 10;
   const description = req.body.description;
   const userId = req.session.user._id
+
   const product = new Product(title, price, description, imageUrl, userId);
 
   product.save()
@@ -72,27 +73,43 @@ exports.postAddProduct = (req, res) => {
 };
 
 
-exports.postUpdateProduct = (req, res, next) => {
+exports.postEditProduct = (req, res, next) => {
+
   const prodId = req.body.prodId;
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const imageUrlInput = req.body.imageUrl;
+  const imageFile = req.file;
   const price = req.body.price;
   const description = req.body.description;
 
-  console.log(price)
-  console.log(prodId)
+  let imageUrl;
 
-  const product = new Product(title, price, description, imageUrl, new mongoDb.ObjectID(prodId));
-  console.log(product)
-      product.save()
-      .then(() => {
-        res.redirect('/admin/products');
-      }).catch(err => {
-        const error = new Error(err);
-        error.httpStatusCode(500);
-        return next(error);
-      });
+  if(imageFile){
+    Product.findById(prodId)
+    .then(prod => {
+      deleteFile(prod.imageUrl);
+    })
+    .then(resutl => {
+      imageUrl = '\\'+imageFile.path;
+
+      const product = new Product(title, price, description, imageUrl);
+
+        product.id = prodId; 
+
+        product.edit()
+          .then(result => {
+              res.redirect('/admin/products');
+          }).catch(err => {
+              const error = new Error(err);
+              error.httpStatusCode(500);
+            return next(error);
+          });
+          })
+        }
+
+  
 };
+
 
 exports.postDeleteProduct = (req, res) => {
 
@@ -108,13 +125,9 @@ exports.postDeleteProduct = (req, res) => {
   })
 };
 
+
 exports.getManageUsers = (req, res) => {
 
-  // const userRole = req.user.role;
-  // if(!userRole){
-  //   return res.redirect('/');
-  // }
-  
   let users;
   User.fetchAll()
   .then(result => {
@@ -126,6 +139,23 @@ exports.getManageUsers = (req, res) => {
     })
   })
 };
+
+
+exports.postAdminUser = (req, res) => {
+  
+  const userEmail = req.body.email;
+
+  User.turnAdmin(userEmail)
+  .then(result => {
+    console.log("Admin user success")
+    res.redirect('/')
+  }).catch(err => {
+    const e = new Error(err);
+    e.httpStatusCode(500)
+    next(e);
+  })
+};
+
 
 
 

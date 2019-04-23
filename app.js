@@ -6,6 +6,7 @@ const session = require('express-session');
 const dbconn = require('./util/dbconnection');
 const mongoDbSession = require('connect-mongodb-session');
 const MongoDbSessionStorage = mongoDbSession(session);
+const multer = require('multer');
 
 const User = require('./models/user')
 
@@ -25,11 +26,31 @@ const sessionStorage = new MongoDbSessionStorage({
 const errorController = require('./controllers/error');
 const app = express();
 
+const fileStorage = multer.diskStorage({
+    destination: (req, res, cb) => {
+        cb(null, 'images')
+    },
+    filename: (req, file ,cb) => {
+        cb(null, + Date.now() + '-' + file.originalname )
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    console.log(file);
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+        cb(null, true)
+    }else{
+        cb(null, false)
+    }
+}
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('imageFile'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(session({
     secret: 'mySecretSession',
     resave: false,

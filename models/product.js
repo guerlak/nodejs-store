@@ -3,43 +3,47 @@ const db = require('../util/dbconnection');
 const mongoDB = db.getDb;
 
 module.exports = class Product {
-  constructor(title, price, description, imageUrl, userId) {
+  constructor(title, price, description, imageUrl) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
-    this.userId = userId;
+
   }
 
   save() {
 
     const dbConn = mongoDB();
-    let opt = null;
-
-    console.log("This _id: "+this.id)
-
-    if(this.id){
-      console.log("Updating on Product class...")
-      opt = dbConn.collection('products')
-      //Id has to be an object then MongoDB can find...
-      .updateOne({_id: new mongo.ObjectID(this.id)}, {$set: this});
-
-    }else{
      
-      console.log("Creating on Product class...")
-      opt = dbConn.collection('products')
+    console.log("Creating on Product class...")
+    return dbConn.collection('products')
       .insertOne(this)
-    }
-    return opt
-        .then((res) => {
-         return res;
-        })
-        .catch(err =>{
-          console.log(err);
-          throw err;
-        })
+      .then((res) => {
+        return res;
+      })
+      .catch(err =>{
+        console.log(err);
+        throw err;
+      })
   }
 
+  edit() {
+
+    const dbConn = mongoDB();
+      console.log("Updating on Product class...")
+      return dbConn.collection('products')
+
+      //Id has to be an object then MongoDB can find...
+      .updateOne({_id: new mongo.ObjectID(this.id)}, {$set: this})
+      .then((res) => {
+        return res;
+      })
+      .catch(err =>{
+        console.log(err);
+        throw err;
+      })
+  }
+  
   static deleteById(id){
 
     const dbConn = mongoDB();
@@ -54,7 +58,6 @@ module.exports = class Product {
 
   static fetchAll() {
     const dbConn = mongoDB();
-
     return dbConn.collection('products') 
   }
 

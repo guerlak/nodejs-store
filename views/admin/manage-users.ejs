@@ -20,7 +20,14 @@
                                 <td><%= user.email %></td>
                                 <td><p style="color: green"><%= user.role %></p></td>
                                 <%if (user.role != "admin"){ %>
-                                <td><input type="checkbox"></td>
+                                    <td>
+                                    <form action="/admin/admin-user" method="post" >
+                                        <input type="hidden" name="email" value="<%=user.email %>">
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                        <input type="submit" value="Admin"></td>
+                            </form>
+                                    </td>
+                              
                                 <%}%>
                             </tr>
           

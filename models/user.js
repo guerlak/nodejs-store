@@ -14,19 +14,11 @@ class User {
         this.cart = {products: []}  
     }
 
-    save() {
-        const dbConn = mongoDB();
-            console.log("Creating on User class")
-            return dbConn.collection('users')
-            .insertOne(this)
-    }
 
-    update(e, value) {
+    static turnAdmin(email) {
         const dbConn = mongoDB();
-            console.log("Updating on User class");
-            console.log(this);
-            console.log(value + "  " + e)
-            return dbConn.collection('users').updateOne({"email": e, }, {$set: {"resetToken": value} })
+            console.log("Turning user admin with the email: " + email);
+            return dbConn.collection('users').updateOne({"email": email, }, {$set: {"isAdmin": true} })
     }
 
     static fetchAll() {
@@ -43,28 +35,6 @@ class User {
             })
       }
 
-      
-    getCart (){
-        const dbConn = mongoDB();
-        return dbConn.collection('users')
-        .findOne({email: this.email})
-    }
-    
-
-    addToCart (prod, id)  {
-        const dbConn = mongoDB();
-
-        let cartProd = {...prod, quantity: {prodId: prod._id, amount: 1}};
-
-        console.log(cartProd); 
-        console.log(this);
-        console.log(id)
-
-        this.cart.products.push(cartProd);
-
-        return dbConn.collection('users').updateOne({_id: new mongo.ObjectID(id)}, {$set: this});
-    }
-
     static findUserById(userId){
 
         const dbConn = mongoDB();
@@ -79,6 +49,37 @@ class User {
         return dbConn.collection('users')
             .findOne({email: emailArg})
     }
+
+    save() {
+        const dbConn = mongoDB();
+            console.log("Creating on User class")
+            return dbConn.collection('users')
+            .insertOne(this)
+    }
+
+    updateToken(e, value) {
+        const dbConn = mongoDB();
+            console.log("Updating on User class");
+            return dbConn.collection('users').updateOne({"email": e, }, {$set: {"resetToken": value} })
+    }
+
+    getCart (){
+        const dbConn = mongoDB();
+        return dbConn.collection('users')
+        .findOne({email: this.email})
+    }
+    
+
+    addToCart (prod, id)  {
+        const dbConn = mongoDB();
+
+        let cartProd = {...prod, quantity: {prodId: prod._id, amount: 1}};
+
+        this.cart.products.push(cartProd);
+
+        return dbConn.collection('users').updateOne({_id: new mongo.ObjectID(id)}, {$set: this});
+    }
+
 }
 
 module.exports = User;

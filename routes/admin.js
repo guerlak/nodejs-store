@@ -18,10 +18,12 @@ router.post('/add-product',isAuth, adminController.postAddProduct);
 // /admin/add-product => GET
 router.get('/edit-product', isAuth, adminController.getEditProduct);
 
-router.post('/update-product',isAuth, adminController.postUpdateProduct);
+router.post('/update-product',isAuth, adminController.postEditProduct);
 
 router.post('/delete-product',isAuth, adminController.postDeleteProduct);
 
 router.get('/manage-users',isAuth, adminController.getManageUsers);
+
+router.post('/admin-user', isAuth, adminController.postAdminUser);
 
 module.exports = router;

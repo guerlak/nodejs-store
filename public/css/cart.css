@@ -1,0 +1,17 @@
+.table-cart{
+    border-collapse: collapse;
+    width: 70%;
+    text-align: center;
+} 
+
+.table-cart td {
+
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.table-cart th {
+    background-color: #00695dcb;
+    color: white;
+    padding: 5px;
+}

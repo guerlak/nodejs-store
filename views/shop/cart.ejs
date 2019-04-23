@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
-
+<link rel="stylesheet" href="/css/cart.css">
+</head>
 
         <%- include('../includes/navigation.ejs') %>
 
@@ -7,20 +8,21 @@
 
             <h2>Cart:</h2>
 
-                <table style="width: 400px; margin: 0 auto">
+                <table class="table-cart">
                 
                     <% if(cart.products.length) {  %>
-                    <tr><td><b>Name</b></td>
-                        <td><b>Price</b></td>
-                        <td><b>Quantity</b></td>
+                    <tr><th><b>Name</b></th>
+                        <th><b>Price</b></th>
+                        <th><b>Quantity</b></th>
                     </tr>
                     <% for (let c of cart.products) { %>
                     <tr><td><%=c.title%></td>
                         <td>$ <%=c.price%></td>
                         <td><%=c.quantity.amount%></td>
+                        <td><span style="color: red">Remove</span></td>
                     </tr>
                     <% } %>
-                    <tr><td><%=cart.totalPrice%></td></tr>
+                    <tr><td><b><span style="color: #00695c">Total:</span>  <%=cart.totalPrice%></b></td></tr>
                     <% }else {  %>
                     <h2>There is no products in the cart...</h2>
                     <% }%>

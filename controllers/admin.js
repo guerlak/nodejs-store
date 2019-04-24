@@ -113,7 +113,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res) => {
 
-  const prodId = req.query.id;
+  const prodId = req.query.productId;
   console.log("Id req delete: " + prodId)
   Product.deleteById(prodId)
   .then(() => {
@@ -122,6 +122,19 @@ exports.postDeleteProduct = (req, res) => {
     const error = new Error(err);
     error.httpStatusCode(500);
     return next(error);
+  })
+};
+
+
+exports.deleteProduct = (req, res) => {
+
+  const prodId = req.params.prodId;
+  console.log("Id req delete: " + prodId)
+  Product.deleteById(prodId)
+  .then(() => {
+    res.status(200).json({message: 'Success'})
+  }).catch(err => {
+    res.status(500).json({message: 'Deleet failed'});
   })
 };
 

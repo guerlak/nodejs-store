@@ -1,5 +1,5 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/cart.css">
     </head>
 
     <body>
@@ -7,7 +7,7 @@
 
             <main>
                 <% if (users.length > 0) { %>
-                    <table>
+                    <table class="table-cart">
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
@@ -16,19 +16,28 @@
                         </tr>
                         <% for (let user of users) { %>
                             <tr>
-                                <td><b><%= user.name %></b></td>
+                                <td><span style="color: green"><b><%= user.name %></b></span></td>
                                 <td><%= user.email %></td>
-                                <td><p style="color: green"><%= user.role %></p></td>
-                                <%if (user.role != "admin"){ %>
+                                
+                                <%if (!user.isAdmin){ %>
+                                    <td></td>
                                     <td>
-                                    <form action="/admin/admin-user" method="post" >
-                                        <input type="hidden" name="email" value="<%=user.email %>">
-                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
-                                        <input type="submit" value="Admin"></td>
-                            </form>
+                                        <form action="/admin/admin-user" method="post" >
+                                            <input type="hidden" name="email" value="<%=user.email %>">
+                                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                            <input type="submit" value="Admin"></td>
+                                        </form>
                                     </td>
-                              
-                                <%}%>
+                                <%}else{%>
+                                    <td>Admin</td>
+                                    <td>
+                                        <form action="/admin/default-user" method="post" >
+                                            <input type="hidden" name="email" value="<%=user.email %>">
+                                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                            <input type="submit" value="Default"></td>
+                                        </form>
+                                    </td>
+                                 <%}%>
                             </tr>
           
                             
